@@ -1,8 +1,11 @@
 import json
 import urllib
+import os
 import movie
 import fresh_tomatoes
 
+JSON_FILE_NAME = "movies.json"
+DEFAULT_PAGE_TITLE = "Movie Trailer Website"
 
 # Free webapi. For more information, check it out @ omdbapi.com
 def get_omdb_data(imdb_id):
@@ -41,25 +44,30 @@ def create_movie_object (imdb_id, youtube_trailer_id):
     return None
 
 
-# Main function just to keep 'movie' concerns separated 
+# Main function just to keep 'movie' names concerns separated 
 def main():
     # Create an empty movies list
     movies = []
     # Default page title in case none is supplied in the JSON file
-    page_title = "Movie Trailer Website"
-    # Open the json file and reads it
-    movies_json_data = open("movies.json").read()
-    # Parse the data to a JSON object
-    movies_json = json.loads(movies_json_data)
-    # Set page name if exists in JSON file
-    if ("page_title" in movies_json):
-        page_title = movies_json["page_title"]
-    # For each movie, retrieve information from omdbAPI  
-    for movie in movies_json["movies"]:
-        movie_instance = create_movie_object(movie["imdb_id"],
-                                             movie["youtube_trailer_id"])
-        if movie_instance:
-            movies.append(movie_instance)
+    page_title = DEFAULT_PAGE_TITLE
+    # Open the json file if it exists and reads it
+    dir_path = os.path.dirname(os.path.realpath(__file__))  # Directory of this file
+    full_path = "\\".join([dir_path, JSON_FILE_NAME])
+    if os.path.isfile(full_path):
+        movies_json_data = open(full_path).read()
+        # Parse the data to a JSON object
+        movies_json = json.loads(movies_json_data)
+        # Set page name if key exists in JSON file
+        if ("page_title" in movies_json):
+            page_title = movies_json["page_title"]
+        # Check it key movies exists in JSON file
+        if ("movies" in movies_json):            
+            # For each movie, retrieve information from omdbAPI  
+            for movie in movies_json["movies"]:
+                movie_instance = create_movie_object(movie["imdb_id"],
+                                                     movie["youtube_trailer_id"])
+                if movie_instance:
+                    movies.append(movie_instance)
     # Finally render the webpage an open it in webbrowser
     fresh_tomatoes.open_movies_page(page_title, movies)
 
