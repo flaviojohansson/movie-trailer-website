@@ -4,7 +4,7 @@ import movie
 import fresh_tomatoes
 
 
-# Free webapi. For more information, check it out omdbapi.com
+# Free webapi. For more information, check it out @ omdbapi.com
 def get_omdb_data(imdb_id):
     connection = urllib.urlopen("http://www.omdbapi.com/?plot=short&r=json&i=" + imdb_id)
     output = connection.read()
@@ -12,7 +12,7 @@ def get_omdb_data(imdb_id):
     return output
 
 
-# Returns a new Movie object if the data was sucessfully retrieved from omdb API
+# Return a new Movie object if the data was sucessfully retrieved from omdb API
 def create_movie_object (imdb_id, youtube_trailer_id):
     omdb_data = get_omdb_data(imdb_id)
     if omdb_data:
@@ -43,19 +43,25 @@ def create_movie_object (imdb_id, youtube_trailer_id):
 
 # Main function just to keep 'movie' concerns separated 
 def main():
-    # Creates an empty movies list
+    # Create an empty movies list
     movies = []
-    # Opens the json file and reads it
+    # Default page title in case none is supplied in the JSON file
+    page_title = "Movie Trailer Website"
+    # Open the json file and reads it
     movies_json_data = open("movies.json").read()
     # Parse the data to a JSON object
     movies_json = json.loads(movies_json_data)
+    # Set page name if exists in JSON file
+    if ("page_title" in movies_json):
+        page_title = movies_json["page_title"]
     # For each movie, retrieve information from omdbAPI  
     for movie in movies_json["movies"]:
-        movie_instance = create_movie_object(movie["imdb_id"], movie["youtube_trailer_id"])
+        movie_instance = create_movie_object(movie["imdb_id"],
+                                             movie["youtube_trailer_id"])
         if movie_instance:
             movies.append(movie_instance)
-
-    fresh_tomatoes.open_movies_page(movies)
+    # Finally render the webpage an open it in webbrowser
+    fresh_tomatoes.open_movies_page(page_title, movies)
 
 if __name__ == "__main__":
     main()
