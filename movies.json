@@ -1,0 +1,14 @@
+{
+    "movies": [
+        {
+            "__title": "Back to the future",
+            "imdb_id": "tt0088763",
+            "youtube_trailer_id": "pbVSDwD3nEM"
+        },
+        {
+            "__title": "The Goonies",
+            "imdb_id": "tt0089218",
+            "youtube_trailer_id": "hJ2j4oWdQtU"
+        }
+    ]
+}
